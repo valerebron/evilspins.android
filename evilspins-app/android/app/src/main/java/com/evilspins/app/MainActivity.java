@@ -5,6 +5,7 @@ import com.getcapacitor.BridgeActivity;
 import com.evilspins.app.permissions.PermissionsPlugin;
 import com.evilspins.app.nfc.NfcPlugin;
 import com.evilspins.app.sensor.LightSensorPlugin;
+import com.evilspins.app.storage.FileStoragePlugin;
 
 public class MainActivity extends BridgeActivity {
     @Override
@@ -13,6 +14,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(PermissionsPlugin.class);
         registerPlugin(NfcPlugin.class);
         registerPlugin(LightSensorPlugin.class);
+        registerPlugin(FileStoragePlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

@@ -5,6 +5,7 @@
   "plugins": {
     "EvilSpinsPermissions": {},
     "EvilSpinsNfc": {},
-    "EvilSpinsLightSensor": {}
+    "EvilSpinsLightSensor": {},
+    "EvilSpinsFileStorage": {}
   }
 }

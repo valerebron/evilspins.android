@@ -45,6 +45,8 @@
     <!-- Storage permissions (Android 10 and below) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- MANAGE_EXTERNAL_STORAGE for Android 11+ to access shared storage root -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <!-- NFC Feature (optional but recommended) -->
     <uses-feature android:name="android.hardware.nfc" android:required="false" />

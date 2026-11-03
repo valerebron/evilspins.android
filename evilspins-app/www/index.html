@@ -15,51 +15,131 @@
             background: #0d1117;
             color: #c9d1d9;
             min-height: 100vh;
-            padding: 16px;
-            font-size: 12px;
+            padding: 12px;
+            font-size: 13px;
             line-height: 1.5;
+            display: flex;
+            flex-direction: column;
         }
         .container {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-        h1 {
-            color: #58a6ff;
-            margin-bottom: 16px;
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .status-bar {
             display: flex;
-            gap: 16px;
-            padding: 12px;
+            flex-direction: column;
+            height: 100vh;
+            gap: 12px;
+        }
+
+        /* Top Status Bar - Three indicators */
+        .status-panel {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
             background: #161b22;
-            border-radius: 6px;
-            margin-bottom: 16px;
+            border-radius: 8px;
             border: 1px solid #30363d;
             flex-wrap: wrap;
         }
         .status-item {
+            flex: 1;
+            min-width: 180px;
             display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #484f58;
-        }
-        .status-dot.active { background: #3fb950; animation: pulse 1s infinite; }
-        .status-dot.error { background: #f85149; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .log-area {
+            flex-direction: column;
+            gap: 6px;
+            padding: 12px;
             background: #0d1117;
+            border-radius: 6px;
+            border: 1px solid #21262d;
+        }
+        .status-label {
+            font-size: 11px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #c9d1d9;
+            word-break: break-word;
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+        .status-value.active { color: #3fb950; }
+        .status-value.empty { color: #8b949e; font-style: italic; }
+        .status-value.denied { color: #f85149; }
+        .status-value.granted { color: #3fb950; }
+
+        /* Middle Action Buttons */
+        .action-panel {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            background: #161b22;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 14px 24px;
             border: 1px solid #30363d;
             border-radius: 6px;
-            padding: 12px;
-            height: calc(100vh - 140px);
+            background: #21262d;
+            color: #c9d1d9;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .action-btn:hover { background: #30363d; border-color: #484f58; }
+        .action-btn:active { background: #161b22; }
+        .action-btn.create { border-color: #3fb950; }
+        .action-btn.create:hover { background: #1a3a2a; }
+        .action-btn.delete { border-color: #f85149; }
+        .action-btn.delete:hover { background: #3a1a1a; }
+
+        /* Bottom Logs */
+        .log-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #161b22;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            overflow: hidden;
+        }
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #0d1117;
+            border-bottom: 1px solid #30363d;
+        }
+        .log-title {
+            font-size: 11px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .log-controls {
+            display: flex;
+            gap: 8px;
+        }
+        .log-btn {
+            padding: 6px 12px;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            background: #21262d;
+            color: #c9d1d9;
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .log-btn:hover { background: #30363d; }
+        .log-area {
+            flex: 1;
             overflow-y: auto;
+            padding: 12px;
             font-size: 11px;
             line-height: 1.6;
         }
@@ -71,140 +151,91 @@
             white-space: pre-wrap;
             font-family: inherit;
         }
-        .log-tag_discovered { background: #1a3a2a; border-left: 3px solid #3fb950; color: #7ee787; }
-        .log-tag_lost { background: #3a1a1a; border-left: 3px solid #f85149; color: #ff7b72; }
+        .log-nfc { background: #1a3a2a; border-left: 3px solid #3fb950; color: #7ee787; }
+        .log-lux { background: #1a3a1a; border-left: 3px solid #d29922; color: #e3b341; }
+        .log-file { background: #1a1a3a; border-left: 3px solid #a371f7; color: #d2a8ff; }
         .log-info { background: #1a2a3a; border-left: 3px solid #58a6ff; color: #79c0ff; }
         .log-warning { background: #3a2a1a; border-left: 3px solid #d29922; color: #e3b341; }
         .log-error { background: #3a1a1a; border-left: 3px solid #f85149; color: #ff7b72; }
-        .log-tag_detected { background: #1a3a2a; border-left: 3px solid #3fb950; color: #7ee787; }
-        .log-structured { background: #1a1a3a; border-left: 3px solid #a371f7; color: #d2a8ff; }
-        .log-lux { background: #1a3a1a; border-left: 3px solid #d29922; color: #e3b341; }
-        .timestamp { color: #8b949e; margin-right: 8px; }
+        .timestamp { color: #8b949e; margin-right: 8px; font-variant-numeric: tabular-nums; }
         .tag { font-weight: bold; color: #ffa657; }
-
-        /* Tag Content Display */
-        .tag-content {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 16px;
-            min-height: 60px;
-        }
-        .tag-content.empty {
-            color: #8b949e;
-            font-style: italic;
-        }
-        .tag-content-label {
-            font-size: 10px;
-            color: #8b949e;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-        .tag-content-value {
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 13px;
-            color: #7ee787;
-            word-break: break-word;
-            white-space: pre-wrap;
-        }
-        .tag-content-meta {
-            margin-top: 8px;
-            font-size: 10px;
-            color: #8b949e;
-        }
-        .clear-btn {
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 11px;
-        }
-        .clear-btn:hover { background: #30363d; }
-        .controls {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔍 NFC Debug Logger</h1>
-
-        <div class="controls">
-            <button class="clear-btn" onclick="clearLogs()">Clear Logs</button>
-            <button class="clear-btn" onclick="restartNfc()">Restart NFC</button>
-            <button class="clear-btn" onclick="getAdapterInfo()">Adapter Info</button>
-        </div>
-
-        <div class="controls" style="margin-top: 8px;">
-            <button class="clear-btn" onclick="startLightSensor()" id="lightStartBtn">Start LUX Sensor</button>
-            <button class="clear-btn" onclick="stopLightSensor()" id="lightStopBtn" disabled>Stop LUX Sensor</button>
-            <button class="clear-btn" onclick="getLightSensorInfo()">Sensor Info</button>
-        </div>
-
-        <div class="status-bar">
+        <!-- Top Status Panel -->
+        <div class="status-panel">
             <div class="status-item">
-                <div class="status-dot" id="nfcDot"></div>
-                <span>NFC: <span id="nfcStatus">Starting...</span></span>
+                <div class="status-label">NFC</div>
+                <div class="status-value empty" id="nfcStatus">No tag detected</div>
             </div>
             <div class="status-item">
-                <div class="status-dot" id="listenDot"></div>
-                <span>Listening: <span id="listenStatus">No</span></span>
+                <div class="status-label">LUX</div>
+                <div class="status-value" id="luxStatus">-- lx</div>
             </div>
             <div class="status-item">
-                <span>Entries: <span id="entryCount">0</span></span>
-            </div>
-            <div class="status-item">
-                <div class="status-dot" id="lightDot"></div>
-                <span>LUX: <span id="lightStatus">Stopped</span></span>
-            </div>
-            <div class="status-item">
-                <span id="luxValue">--</span>
+                <div class="status-label">FILES</div>
+                <div class="status-value denied" id="fileStatus">Permission denied</div>
             </div>
         </div>
 
-        <!-- Tag Content Display -->
-        <div class="tag-content empty" id="tagContent">
-            <div class="tag-content-label">Tag Content</div>
-            <div class="tag-content-value" id="tagContentValue">No tag detected</div>
-            <div class="tag-content-meta" id="tagContentMeta"></div>
+        <!-- Middle Action Buttons -->
+        <div class="action-panel">
+            <button class="action-btn create" onclick="createFile()">Create File</button>
+            <button class="action-btn delete" onclick="deleteFile()">Delete File</button>
         </div>
 
-        <div class="log-area" id="logArea">
-            <div class="log-entry log-info">
-                <span class="timestamp">[init]</span> NFC Debug Logger started. Waiting for NFC events...
+        <!-- Bottom Log Panel -->
+        <div class="log-panel">
+            <div class="log-header">
+                <span class="log-title">Logs</span>
+                <div class="log-controls">
+                    <button class="log-btn" onclick="clearLogs()">Clear</button>
+                    <button class="log-btn" onclick="toggleFilter()" id="filterBtn">Show: All</button>
+                </div>
+            </div>
+            <div class="log-area" id="logArea">
+                <div class="log-entry log-info">
+                    <span class="timestamp">[init]</span> App started. Waiting for events...
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         const logArea = document.getElementById('logArea');
-        const nfcDot = document.getElementById('nfcDot');
         const nfcStatus = document.getElementById('nfcStatus');
-        const listenDot = document.getElementById('listenDot');
-        const listenStatus = document.getElementById('listenStatus');
-        const entryCount = document.getElementById('entryCount');
-        const tagContent = document.getElementById('tagContent');
-        const tagContentValue = document.getElementById('tagContentValue');
-        const tagContentMeta = document.getElementById('tagContentMeta');
+        const luxStatus = document.getElementById('luxStatus');
+        const fileStatus = document.getElementById('fileStatus');
+        const filterBtn = document.getElementById('filterBtn');
         let entryNum = 0;
+        let showAllLogs = true;
 
         function log(message, type = 'info') {
-            entryNum++;
-            entryCount.textContent = entryNum;
+            if (!showAllLogs) {
+                const isFileLog = type === 'file' || type === 'info' || type === 'error' || type === 'warning';
+                if (!isFileLog) return;
+            }
 
+            entryNum++;
             const entry = document.createElement('div');
             entry.className = `log-entry log-${type}`;
             const time = new Date().toLocaleTimeString() + '.' + String(Date.now() % 1000).padStart(3, '0');
             entry.innerHTML = `<span class="timestamp">[${time}]</span> <span class="tag">[${type.toUpperCase()}]</span> ${escapeHtml(message)}`;
             logArea.appendChild(entry);
             logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        function toggleFilter() {
+            showAllLogs = !showAllLogs;
+            filterBtn.textContent = showAllLogs ? 'Show: All' : 'Show: Files Only';
+
+            const entries = logArea.querySelectorAll('.log-entry');
+            entries.forEach(entry => {
+                const type = entry.className.replace('log-entry log-', '');
+                const isFileLog = type === 'file' || type === 'info' || type === 'error' || type === 'warning';
+                entry.style.display = (showAllLogs || isFileLog) ? '' : 'none';
+            });
         }
 
         function escapeHtml(text) {
@@ -216,138 +247,82 @@
         function clearLogs() {
             logArea.innerHTML = '';
             entryNum = 0;
-            entryCount.textContent = 0;
         }
 
-        function updateTagContent(event) {
-            if (!event.ndefRecords || event.ndefRecords.length === 0) {
-                tagContent.className = 'tag-content empty';
-                tagContentValue.textContent = 'No NDEF content';
-                tagContentMeta.textContent = 'Tag ID: ' + (event.tagId || 'unknown');
+        // Update status indicators
+        function updateNfcStatus(content) {
+            if (content && content !== 'No tag detected') {
+                nfcStatus.textContent = content;
+                nfcStatus.className = 'status-value active';
+            } else {
+                nfcStatus.textContent = 'No tag detected';
+                nfcStatus.className = 'status-value empty';
+            }
+        }
+
+        function updateLuxStatus(lux) {
+            luxStatus.textContent = lux.toFixed(1) + ' lx';
+        }
+
+        function updateFileStatus(granted) {
+            if (granted) {
+                fileStatus.textContent = 'Permission granted';
+                fileStatus.className = 'status-value granted';
+            } else {
+                fileStatus.textContent = 'Permission denied';
+                fileStatus.className = 'status-value denied';
+            }
+        }
+
+        // NFC Listener
+        function setupNfcListener() {
+            const plugin = window.Capacitor?.Plugins?.EvilSpinsNfc;
+            if (!plugin) {
+                log('EvilSpinsNfc plugin not available', 'error');
                 return;
             }
 
-            tagContent.className = 'tag-content';
+            plugin.isSupported().then(r => log('NFC Supported: ' + r.supported, 'info'));
+            plugin.isEnabled().then(r => log('NFC Enabled: ' + r.enabled, 'info'));
 
-            // Extract all payloads
-            const payloads = event.ndefRecords.map(r => r.payload).filter(p => p && p !== '');
+            if (plugin.addListener) {
+                plugin.addListener('nfcEvent', (event) => {
+                    if (!event) return;
 
-            if (payloads.length === 0) {
-                tagContentValue.textContent = '(empty payloads)';
-            } else if (payloads.length === 1) {
-                tagContentValue.textContent = payloads[0];
-            } else {
-                tagContentValue.textContent = payloads.join('\n---\n');
+                    const eventType = event.event || 'unknown';
+
+                    if (eventType === 'log') {
+                        log(event.message, event.type);
+                    } else if (eventType === 'tag_detected') {
+                        log('Tag detected: ' + event.tagId, 'nfc');
+                        if (event.ndefRecords && event.ndefRecords.length > 0) {
+                            const payloads = event.ndefRecords.map(r => r.payload).filter(p => p && p !== '');
+                            if (payloads.length > 0) {
+                                updateNfcStatus(payloads.join('\n---\n'));
+                            }
+                            log('NDEF: ' + JSON.stringify(event.ndefRecords), 'nfc');
+                        } else {
+                            updateNfcStatus('Tag ID: ' + event.tagId);
+                        }
+                    } else if (eventType === 'tag_lost' || eventType === 'tag_removed') {
+                        log('Tag removed: ' + event.tagId, 'nfc');
+                        updateNfcStatus('No tag detected');
+                    } else {
+                        log('NFC event: ' + JSON.stringify(event), 'nfc');
+                    }
+                });
             }
 
-            // Meta info
-            const types = event.ndefRecords.map(r => {
-                const tnfNames = ['EMPTY', 'WELL_KNOWN', 'MIME_MEDIA', 'ABSOLUTE_URI', 'EXTERNAL', 'UNKNOWN', 'UNCHANGED', 'RESERVED'];
-                return tnfNames[r.tnf] || 'TNF_' + r.tnf;
-            }).join(', ');
-
-            tagContentMeta.textContent = 'Tag ID: ' + (event.tagId || 'unknown') + ' | Records: ' + event.ndefRecords.length + ' | Types: ' + types;
+            plugin.startListening().then(() => {
+                log('NFC listening started', 'info');
+            }).catch(e => log('NFC start error: ' + e.message, 'error'));
         }
 
-        function updateStatus(connected, listening) {
-            nfcStatus.textContent = connected ? 'Connected' : 'Disconnected';
-            nfcDot.className = 'status-dot ' + (connected ? 'active' : 'error');
-            listenStatus.textContent = listening ? 'Yes' : 'No';
-            listenDot.className = 'status-dot ' + (listening ? 'active' : '');
-        }
-
-        async function restartNfc() {
-            log('Restarting NFC listener...', 'info');
-            try {
-                const plugin = window.Capacitor?.Plugins?.EvilSpinsNfc;
-                if (plugin) {
-                    await plugin.stopListening();
-                    await new Promise(r => setTimeout(r, 500));
-                    await plugin.startListening();
-                    log('NFC restarted', 'info');
-                }
-            } catch (e) {
-                log('Error restarting NFC: ' + e.message, 'error');
-            }
-        }
-
-        async function getAdapterInfo() {
-            try {
-                const plugin = window.Capacitor?.Plugins?.EvilSpinsNfc;
-                if (plugin) {
-                    const result = await plugin.getAdapterInfo();
-                    log('Adapter Info: ' + JSON.stringify(result, null, 2), 'info');
-                }
-            } catch (e) {
-                log('Error getting adapter info: ' + e.message, 'error');
-            }
-        }
-
-        // Light Sensor Functions
-        const lightDot = document.getElementById('lightDot');
-        const lightStatus = document.getElementById('lightStatus');
-        const luxValue = document.getElementById('luxValue');
-        const lightStartBtn = document.getElementById('lightStartBtn');
-        const lightStopBtn = document.getElementById('lightStopBtn');
-
-        function updateLightStatus(listening, lux) {
-            lightStatus.textContent = listening ? 'Running' : 'Stopped';
-            lightDot.className = 'status-dot ' + (listening ? 'active' : '');
-            lightStartBtn.disabled = listening;
-            lightStopBtn.disabled = !listening;
-            if (lux !== undefined) {
-                luxValue.textContent = lux.toFixed(2) + ' lx';
-            }
-        }
-
-        async function startLightSensor() {
-            try {
-                const plugin = window.Capacitor?.Plugins?.EvilSpinsLightSensor;
-                if (!plugin) {
-                    log('EvilSpinsLightSensor plugin not available', 'error');
-                    return;
-                }
-                log('Starting light sensor...', 'info');
-                const result = await plugin.startListening();
-                if (result.listening) {
-                    log('Light sensor started', 'info');
-                    updateLightStatus(true);
-                }
-            } catch (e) {
-                log('Error starting light sensor: ' + e.message, 'error');
-            }
-        }
-
-        async function stopLightSensor() {
-            try {
-                const plugin = window.Capacitor?.Plugins?.EvilSpinsLightSensor;
-                if (!plugin) return;
-                await plugin.stopListening();
-                log('Light sensor stopped', 'warning');
-                updateLightStatus(false);
-                luxValue.textContent = '--';
-            } catch (e) {
-                log('Error stopping light sensor: ' + e.message, 'error');
-            }
-        }
-
-        async function getLightSensorInfo() {
-            try {
-                const plugin = window.Capacitor?.Plugins?.EvilSpinsLightSensor;
-                if (plugin) {
-                    const result = await plugin.isSupported();
-                    log('Light Sensor Supported: ' + result.supported, 'info');
-                }
-            } catch (e) {
-                log('Error getting light sensor info: ' + e.message, 'error');
-            }
-        }
-
-        // Setup Light Sensor event listener
+        // Light Sensor Listener
         function setupLightSensorListener() {
             const plugin = window.Capacitor?.Plugins?.EvilSpinsLightSensor;
             if (!plugin) {
-                log('EvilSpinsLightSensor plugin not available', 'warning');
+                log('EvilSpinsLightSensor plugin not available', 'error');
                 return;
             }
 
@@ -358,11 +333,9 @@
                     if (eventType === 'log') {
                         log(event.message, event.type);
                         if (event.type === 'lux') {
-                            // Extract lux value from message like "LUX: 123.45"
                             const match = event.message.match(/LUX:\s*([\d.]+)/);
                             if (match) {
-                                const lux = parseFloat(match[1]);
-                                updateLightStatus(true, lux);
+                                updateLuxStatus(parseFloat(match[1]));
                             }
                         }
                     }
@@ -370,83 +343,78 @@
             }
         }
 
-        // Setup NFC event listener
-        function setupNfcListener() {
-            const plugin = window.Capacitor?.Plugins?.EvilSpinsNfc;
+        // File Storage Listener
+        function setupFileStorageListener() {
+            const plugin = window.Capacitor.Plugins.EvilSpinsFileStorage;
             if (!plugin) {
-                log('EvilSpinsNfc plugin not available', 'error');
-                updateStatus(false, false);
+                log('EvilSpinsFileStorage plugin not available', 'error');
                 return;
             }
 
-            // Check adapter
-            plugin.isSupported().then(r => {
-                log('NFC Supported: ' + r.supported, 'info');
-            });
-            plugin.isEnabled().then(r => {
-                log('NFC Enabled: ' + r.enabled, 'info');
-                updateStatus(r.enabled, false);
-            });
-
-            // Listen for all events
-            if (plugin.addListener) {
-                plugin.addListener('nfcEvent', (event) => {
-                    if (!event) return;
-
-                    const eventType = event.event || 'unknown';
-
-                    if (eventType === 'log') {
-                        log(event.message, event.type);
-                    } else if (eventType === 'tag_detected') {
-                        log('=== STRUCTURED TAG_DETECTED ===', 'tag_detected');
-                        log('Tag ID: ' + event.tagId, 'tag_detected');
-                        log('Tech List: ' + event.techList, 'tag_detected');
-                        if (event.ndefRecords && event.ndefRecords.length > 0) {
-                            log('NDEF Records: ' + JSON.stringify(event.ndefRecords, null, 2), 'structured');
-                        } else {
-                            log('No NDEF records', 'tag_detected');
-                        }
-                        // Update tag content display
-                        updateTagContent(event);
-                    } else if (eventType === 'tag_lost') {
-                        log('=== STRUCTURED TAG_LOST ===', 'tag_lost');
-                        log('Tag ID: ' + event.tagId, 'tag_lost');
-                        // Clear tag content
-                        tagContent.className = 'tag-content empty';
-                        tagContentValue.textContent = 'No tag detected';
-                        tagContentMeta.textContent = '';
-                    } else if (eventType === 'tag_removed') {
-                        log('=== TAG REMOVED (via OnTagRemovedListener) ===', 'tag_removed');
-                        // Clear tag content
-                        tagContent.className = 'tag-content empty';
-                        tagContentValue.textContent = 'No tag detected';
-                        tagContentMeta.textContent = '';
-                    } else if (eventType === 'tag_present') {
-                        log('=== TAG_PRESENT (legacy) ===', 'info');
-                        log('Tag ID: ' + event.tagId, 'info');
-                    } else if (eventType === 'tag_absent') {
-                        log('=== TAG_ABSENT (legacy) ===', 'warning');
-                        log('Tag ID: ' + event.tagId + ' Reason: ' + event.reason, 'warning');
-                    } else {
-                        log('Unknown event: ' + JSON.stringify(event), 'warning');
+            plugin.addListener('fileStorageEvent', (event) => {
+                if (!event) return;
+                const eventType = event.event || 'unknown';
+                if (eventType === 'log') {
+                    log(event.message, event.type === 'info' ? 'file' : event.type);
+                    // Check for permission status in log messages
+                    if (event.message.includes('MANAGE_EXTERNAL_STORAGE: GRANTED') ||
+                        event.message.includes('WRITE_EXTERNAL_STORAGE: GRANTED') ||
+                        event.message.includes('hasManageStoragePermission: true')) {
+                        updateFileStatus(true);
+                    } else if (event.message.includes('MANAGE_EXTERNAL_STORAGE: NOT GRANTED') ||
+                               event.message.includes('WRITE_EXTERNAL_STORAGE: NOT GRANTED') ||
+                               event.message.includes('hasManageStoragePermission: false') ||
+                               event.message.includes('hasWriteExternalStoragePermission: false')) {
+                        updateFileStatus(false);
                     }
-                });
-            }
-
-            // The plugin auto-starts on load, but let's also call startListening to be sure
-            plugin.startListening().then(() => {
-                log('startListening() called', 'info');
-                updateStatus(true, true);
-            }).catch(e => {
-                log('startListening error: ' + e.message, 'error');
-                updateStatus(false, false);
+                }
             });
+
+            log('FileStorage listener ready', 'file');
         }
 
-        // Initialize on load
+        // File Actions
+        function createFile() {
+            const plugin = window.Capacitor.Plugins.EvilSpinsFileStorage;
+            if (!plugin) { log('Plugin not available', 'error'); return; }
+
+            const fileName = 'evilspins_' + Date.now() + '.txt';
+            const content = 'Created: ' + new Date().toISOString() + '\nFrom evilspins app';
+
+            log('Creating file: ' + fileName, 'file');
+            plugin.writeFile({ fileName, content, directory: '' })
+                .then(result => {
+                    log('Created: ' + result.path + ' (' + result.size + ' bytes)', 'file');
+                    lastCreatedFile = fileName;
+                })
+                .catch(e => log('Create error: ' + e.message, 'error'));
+        }
+
+        function deleteFile() {
+            const plugin = window.Capacitor.Plugins.EvilSpinsFileStorage;
+            if (!plugin) { log('Plugin not available', 'error'); return; }
+
+            if (!lastCreatedFile) {
+                log('No file to delete (create one first)', 'warning');
+                return;
+            }
+
+            log('Deleting file: ' + lastCreatedFile, 'file');
+            plugin.deleteFile({ fileName: lastCreatedFile, directory: '' })
+                .then(result => {
+                    log('Deleted: ' + result.path, 'file');
+                    lastCreatedFile = null;
+                })
+                .catch(e => log('Delete error: ' + e.message, 'error'));
+        }
+
+        let lastCreatedFile = null;
+
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             setupNfcListener();
             setupLightSensorListener();
+            setupFileStorageListener();
         });
     </script>
     <script src="cordova.js"></script>
