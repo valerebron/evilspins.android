@@ -4,6 +4,7 @@
   "webDir": "www",
   "plugins": {
     "EvilSpinsPermissions": {},
-    "EvilSpinsNfc": {}
+    "EvilSpinsNfc": {},
+    "EvilSpinsLightSensor": {}
   }
 }

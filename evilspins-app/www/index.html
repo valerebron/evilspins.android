@@ -78,6 +78,7 @@
         .log-error { background: #3a1a1a; border-left: 3px solid #f85149; color: #ff7b72; }
         .log-tag_detected { background: #1a3a2a; border-left: 3px solid #3fb950; color: #7ee787; }
         .log-structured { background: #1a1a3a; border-left: 3px solid #a371f7; color: #d2a8ff; }
+        .log-lux { background: #1a3a1a; border-left: 3px solid #d29922; color: #e3b341; }
         .timestamp { color: #8b949e; margin-right: 8px; }
         .tag { font-weight: bold; color: #ffa657; }
 
@@ -141,6 +142,12 @@
             <button class="clear-btn" onclick="getAdapterInfo()">Adapter Info</button>
         </div>
 
+        <div class="controls" style="margin-top: 8px;">
+            <button class="clear-btn" onclick="startLightSensor()" id="lightStartBtn">Start LUX Sensor</button>
+            <button class="clear-btn" onclick="stopLightSensor()" id="lightStopBtn" disabled>Stop LUX Sensor</button>
+            <button class="clear-btn" onclick="getLightSensorInfo()">Sensor Info</button>
+        </div>
+
         <div class="status-bar">
             <div class="status-item">
                 <div class="status-dot" id="nfcDot"></div>
@@ -152,6 +159,13 @@
             </div>
             <div class="status-item">
                 <span>Entries: <span id="entryCount">0</span></span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot" id="lightDot"></div>
+                <span>LUX: <span id="lightStatus">Stopped</span></span>
+            </div>
+            <div class="status-item">
+                <span id="luxValue">--</span>
             </div>
         </div>
 
@@ -269,6 +283,93 @@
             }
         }
 
+        // Light Sensor Functions
+        const lightDot = document.getElementById('lightDot');
+        const lightStatus = document.getElementById('lightStatus');
+        const luxValue = document.getElementById('luxValue');
+        const lightStartBtn = document.getElementById('lightStartBtn');
+        const lightStopBtn = document.getElementById('lightStopBtn');
+
+        function updateLightStatus(listening, lux) {
+            lightStatus.textContent = listening ? 'Running' : 'Stopped';
+            lightDot.className = 'status-dot ' + (listening ? 'active' : '');
+            lightStartBtn.disabled = listening;
+            lightStopBtn.disabled = !listening;
+            if (lux !== undefined) {
+                luxValue.textContent = lux.toFixed(2) + ' lx';
+            }
+        }
+
+        async function startLightSensor() {
+            try {
+                const plugin = window.Capacitor?.Plugins?.EvilSpinsLightSensor;
+                if (!plugin) {
+                    log('EvilSpinsLightSensor plugin not available', 'error');
+                    return;
+                }
+                log('Starting light sensor...', 'info');
+                const result = await plugin.startListening();
+                if (result.listening) {
+                    log('Light sensor started', 'info');
+                    updateLightStatus(true);
+                }
+            } catch (e) {
+                log('Error starting light sensor: ' + e.message, 'error');
+            }
+        }
+
+        async function stopLightSensor() {
+            try {
+                const plugin = window.Capacitor?.Plugins?.EvilSpinsLightSensor;
+                if (!plugin) return;
+                await plugin.stopListening();
+                log('Light sensor stopped', 'warning');
+                updateLightStatus(false);
+                luxValue.textContent = '--';
+            } catch (e) {
+                log('Error stopping light sensor: ' + e.message, 'error');
+            }
+        }
+
+        async function getLightSensorInfo() {
+            try {
+                const plugin = window.Capacitor?.Plugins?.EvilSpinsLightSensor;
+                if (plugin) {
+                    const result = await plugin.isSupported();
+                    log('Light Sensor Supported: ' + result.supported, 'info');
+                }
+            } catch (e) {
+                log('Error getting light sensor info: ' + e.message, 'error');
+            }
+        }
+
+        // Setup Light Sensor event listener
+        function setupLightSensorListener() {
+            const plugin = window.Capacitor?.Plugins?.EvilSpinsLightSensor;
+            if (!plugin) {
+                log('EvilSpinsLightSensor plugin not available', 'warning');
+                return;
+            }
+
+            if (plugin.addListener) {
+                plugin.addListener('lightSensorEvent', (event) => {
+                    if (!event) return;
+                    const eventType = event.event || 'unknown';
+                    if (eventType === 'log') {
+                        log(event.message, event.type);
+                        if (event.type === 'lux') {
+                            // Extract lux value from message like "LUX: 123.45"
+                            const match = event.message.match(/LUX:\s*([\d.]+)/);
+                            if (match) {
+                                const lux = parseFloat(match[1]);
+                                updateLightStatus(true, lux);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
         // Setup NFC event listener
         function setupNfcListener() {
             const plugin = window.Capacitor?.Plugins?.EvilSpinsNfc;
@@ -345,6 +446,7 @@
         // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
             setupNfcListener();
+            setupLightSensorListener();
         });
     </script>
     <script src="cordova.js"></script>
