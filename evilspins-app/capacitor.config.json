@@ -1,0 +1,9 @@
+{
+  "appId": "com.evilspins.app",
+  "appName": "evilspins-app",
+  "webDir": "www",
+  "plugins": {
+    "EvilSpinsPermissions": {},
+    "EvilSpinsNfc": {}
+  }
+}

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EvilSpins NFC Debug</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            padding: 16px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #58a6ff;
+            margin-bottom: 16px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .status-bar {
+            display: flex;
+            gap: 16px;
+            padding: 12px;
+            background: #161b22;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            border: 1px solid #30363d;
+            flex-wrap: wrap;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #484f58;
+        }
+        .status-dot.active { background: #3fb950; animation: pulse 1s infinite; }
+        .status-dot.error { background: #f85149; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .log-area {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+        .log-entry {
+            margin: 2px 0;
+            padding: 4px 8px;
+            border-radius: 3px;
+            word-break: break-word;
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+        .log-tag_discovered { background: #1a3a2a; border-left: 3px solid #3fb950; color: #7ee787; }
+        .log-tag_lost { background: #3a1a1a; border-left: 3px solid #f85149; color: #ff7b72; }
+        .log-info { background: #1a2a3a; border-left: 3px solid #58a6ff; color: #79c0ff; }
+        .log-warning { background: #3a2a1a; border-left: 3px solid #d29922; color: #e3b341; }
+        .log-error { background: #3a1a1a; border-left: 3px solid #f85149; color: #ff7b72; }
+        .log-tag_detected { background: #1a3a2a; border-left: 3px solid #3fb950; color: #7ee787; }
+        .log-structured { background: #1a1a3a; border-left: 3px solid #a371f7; color: #d2a8ff; }
+        .timestamp { color: #8b949e; margin-right: 8px; }
+        .tag { font-weight: bold; color: #ffa657; }
+
+        /* Tag Content Display */
+        .tag-content {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 16px;
+            min-height: 60px;
+        }
+        .tag-content.empty {
+            color: #8b949e;
+            font-style: italic;
+        }
+        .tag-content-label {
+            font-size: 10px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .tag-content-value {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            color: #7ee787;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+        .tag-content-meta {
+            margin-top: 8px;
+            font-size: 10px;
+            color: #8b949e;
+        }
+        .clear-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 11px;
+        }
+        .clear-btn:hover { background: #30363d; }
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 NFC Debug Logger</h1>
+
+        <div class="controls">
+            <button class="clear-btn" onclick="clearLogs()">Clear Logs</button>
+            <button class="clear-btn" onclick="restartNfc()">Restart NFC</button>
+            <button class="clear-btn" onclick="getAdapterInfo()">Adapter Info</button>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot" id="nfcDot"></div>
+                <span>NFC: <span id="nfcStatus">Starting...</span></span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot" id="listenDot"></div>
+                <span>Listening: <span id="listenStatus">No</span></span>
+            </div>
+            <div class="status-item">
+                <span>Entries: <span id="entryCount">0</span></span>
+            </div>
+        </div>
+
+        <!-- Tag Content Display -->
+        <div class="tag-content empty" id="tagContent">
+            <div class="tag-content-label">Tag Content</div>
+            <div class="tag-content-value" id="tagContentValue">No tag detected</div>
+            <div class="tag-content-meta" id="tagContentMeta"></div>
+        </div>
+
+        <div class="log-area" id="logArea">
+            <div class="log-entry log-info">
+                <span class="timestamp">[init]</span> NFC Debug Logger started. Waiting for NFC events...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const logArea = document.getElementById('logArea');
+        const nfcDot = document.getElementById('nfcDot');
+        const nfcStatus = document.getElementById('nfcStatus');
+        const listenDot = document.getElementById('listenDot');
+        const listenStatus = document.getElementById('listenStatus');
+        const entryCount = document.getElementById('entryCount');
+        const tagContent = document.getElementById('tagContent');
+        const tagContentValue = document.getElementById('tagContentValue');
+        const tagContentMeta = document.getElementById('tagContentMeta');
+        let entryNum = 0;
+
+        function log(message, type = 'info') {
+            entryNum++;
+            entryCount.textContent = entryNum;
+
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            const time = new Date().toLocaleTimeString() + '.' + String(Date.now() % 1000).padStart(3, '0');
+            entry.innerHTML = `<span class="timestamp">[${time}]</span> <span class="tag">[${type.toUpperCase()}]</span> ${escapeHtml(message)}`;
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function clearLogs() {
+            logArea.innerHTML = '';
+            entryNum = 0;
+            entryCount.textContent = 0;
+        }
+
+        function updateTagContent(event) {
+            if (!event.ndefRecords || event.ndefRecords.length === 0) {
+                tagContent.className = 'tag-content empty';
+                tagContentValue.textContent = 'No NDEF content';
+                tagContentMeta.textContent = 'Tag ID: ' + (event.tagId || 'unknown');
+                return;
+            }
+
+            tagContent.className = 'tag-content';
+
+            // Extract all payloads
+            const payloads = event.ndefRecords.map(r => r.payload).filter(p => p && p !== '');
+
+            if (payloads.length === 0) {
+                tagContentValue.textContent = '(empty payloads)';
+            } else if (payloads.length === 1) {
+                tagContentValue.textContent = payloads[0];
+            } else {
+                tagContentValue.textContent = payloads.join('\n---\n');
+            }
+
+            // Meta info
+            const types = event.ndefRecords.map(r => {
+                const tnfNames = ['EMPTY', 'WELL_KNOWN', 'MIME_MEDIA', 'ABSOLUTE_URI', 'EXTERNAL', 'UNKNOWN', 'UNCHANGED', 'RESERVED'];
+                return tnfNames[r.tnf] || 'TNF_' + r.tnf;
+            }).join(', ');
+
+            tagContentMeta.textContent = 'Tag ID: ' + (event.tagId || 'unknown') + ' | Records: ' + event.ndefRecords.length + ' | Types: ' + types;
+        }
+
+        function updateStatus(connected, listening) {
+            nfcStatus.textContent = connected ? 'Connected' : 'Disconnected';
+            nfcDot.className = 'status-dot ' + (connected ? 'active' : 'error');
+            listenStatus.textContent = listening ? 'Yes' : 'No';
+            listenDot.className = 'status-dot ' + (listening ? 'active' : '');
+        }
+
+        async function restartNfc() {
+            log('Restarting NFC listener...', 'info');
+            try {
+                const plugin = window.Capacitor?.Plugins?.EvilSpinsNfc;
+                if (plugin) {
+                    await plugin.stopListening();
+                    await new Promise(r => setTimeout(r, 500));
+                    await plugin.startListening();
+                    log('NFC restarted', 'info');
+                }
+            } catch (e) {
+                log('Error restarting NFC: ' + e.message, 'error');
+            }
+        }
+
+        async function getAdapterInfo() {
+            try {
+                const plugin = window.Capacitor?.Plugins?.EvilSpinsNfc;
+                if (plugin) {
+                    const result = await plugin.getAdapterInfo();
+                    log('Adapter Info: ' + JSON.stringify(result, null, 2), 'info');
+                }
+            } catch (e) {
+                log('Error getting adapter info: ' + e.message, 'error');
+            }
+        }
+
+        // Setup NFC event listener
+        function setupNfcListener() {
+            const plugin = window.Capacitor?.Plugins?.EvilSpinsNfc;
+            if (!plugin) {
+                log('EvilSpinsNfc plugin not available', 'error');
+                updateStatus(false, false);
+                return;
+            }
+
+            // Check adapter
+            plugin.isSupported().then(r => {
+                log('NFC Supported: ' + r.supported, 'info');
+            });
+            plugin.isEnabled().then(r => {
+                log('NFC Enabled: ' + r.enabled, 'info');
+                updateStatus(r.enabled, false);
+            });
+
+            // Listen for all events
+            if (plugin.addListener) {
+                plugin.addListener('nfcEvent', (event) => {
+                    if (!event) return;
+
+                    const eventType = event.event || 'unknown';
+
+                    if (eventType === 'log') {
+                        log(event.message, event.type);
+                    } else if (eventType === 'tag_detected') {
+                        log('=== STRUCTURED TAG_DETECTED ===', 'tag_detected');
+                        log('Tag ID: ' + event.tagId, 'tag_detected');
+                        log('Tech List: ' + event.techList, 'tag_detected');
+                        if (event.ndefRecords && event.ndefRecords.length > 0) {
+                            log('NDEF Records: ' + JSON.stringify(event.ndefRecords, null, 2), 'structured');
+                        } else {
+                            log('No NDEF records', 'tag_detected');
+                        }
+                        // Update tag content display
+                        updateTagContent(event);
+                    } else if (eventType === 'tag_lost') {
+                        log('=== STRUCTURED TAG_LOST ===', 'tag_lost');
+                        log('Tag ID: ' + event.tagId, 'tag_lost');
+                        // Clear tag content
+                        tagContent.className = 'tag-content empty';
+                        tagContentValue.textContent = 'No tag detected';
+                        tagContentMeta.textContent = '';
+                    } else if (eventType === 'tag_removed') {
+                        log('=== TAG REMOVED (via OnTagRemovedListener) ===', 'tag_removed');
+                        // Clear tag content
+                        tagContent.className = 'tag-content empty';
+                        tagContentValue.textContent = 'No tag detected';
+                        tagContentMeta.textContent = '';
+                    } else if (eventType === 'tag_present') {
+                        log('=== TAG_PRESENT (legacy) ===', 'info');
+                        log('Tag ID: ' + event.tagId, 'info');
+                    } else if (eventType === 'tag_absent') {
+                        log('=== TAG_ABSENT (legacy) ===', 'warning');
+                        log('Tag ID: ' + event.tagId + ' Reason: ' + event.reason, 'warning');
+                    } else {
+                        log('Unknown event: ' + JSON.stringify(event), 'warning');
+                    }
+                });
+            }
+
+            // The plugin auto-starts on load, but let's also call startListening to be sure
+            plugin.startListening().then(() => {
+                log('startListening() called', 'info');
+                updateStatus(true, true);
+            }).catch(e => {
+                log('startListening error: ' + e.message, 'error');
+                updateStatus(false, false);
+            });
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNfcListener();
+        });
+    </script>
+    <script src="cordova.js"></script>
+    <script src="capacitor.js"></script>
+</body>
+</html>
