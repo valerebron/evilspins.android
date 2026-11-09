@@ -1,7 +1,0 @@
-{
-  "plugins": {
-    "EvilSpinsPermissions": {
-      "className": "com.evilspins.app.permissions.PermissionsPlugin"
-    }
-  }
-}
