@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "android:build": "ANDROID_HOME=/home/user/Android/Sdk PATH=\"$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools\" JAVA_HOME=/usr/lib/jvm/java-17-openjdk PATH=\"$JAVA_HOME/bin:$PATH\" cd android && ./gradlew assembleDebug",
-    "android:install": "adb install -r android/app/build/outputs/apk/debug/app-debug.apk",
-    "android:launch": "adb shell am start -n com.evilspins.app/.MainActivity",
-    "android:logs": "adb logcat | grep -iE \"evilspins|capacitor|EvilSpinsPermissions\"",
-    "android:uninstall": "adb uninstall com.evilspins.app 2>/dev/null || true",
-    "android:rebuild": "npm run android:uninstall && npm run android:build && npm run android:install && npm run android:launch",
-    "android:scrcpy": "scrcpy -s 1e5dbd15",
-    "android": "npm run android:rebuild & npm run android:scrcpy"
+    "build": "ANDROID_HOME=/home/user/Android/Sdk PATH=\"$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools\" JAVA_HOME=/usr/lib/jvm/java-17-openjdk PATH=\"$JAVA_HOME/bin:$PATH\" cd android && ./gradlew assembleDebug",
+    "install": "adb install -r android/app/build/outputs/apk/debug/app-debug.apk",
+    "launch": "adb shell am start -n com.evilspins.app/.MainActivity",
+    "logs": "adb logcat | grep -iE \"evilspins|capacitor|EvilSpinsPermissions\"",
+    "uninstall": "adb uninstall com.evilspins.app 2>/dev/null || true",
+    "rebuild": "npm run uninstall && npm run build && npm run install && npm run launch",
+    "scrcpy": "scrcpy -f",
+    "dev": "npm run rebuild & npm run scrcpy"
   },
   "keywords": [],
   "type": "commonjs",
