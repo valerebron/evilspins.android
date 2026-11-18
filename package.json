@@ -11,7 +11,7 @@
     "logs": "adb logcat | grep -iE \"evilspins|capacitor|EvilSpinsPermissions\"",
     "uninstall": "adb uninstall com.evilspins.app 2>/dev/null || true",
     "rebuild": "npm run uninstall && npm run build && npm run install && npm run launch",
-    "scrcpy": "scrcpy -f",
+    "scrcpy": "scrcpy",
     "dev": "npm run rebuild & npm run scrcpy"
   },
   "keywords": [],
